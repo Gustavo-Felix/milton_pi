@@ -1,0 +1,51 @@
+FASE 02 — CONFIGURAÇÃO E POSTGRESQL
+
+OBJETIVO
+Criar a configuração segura da pipeline e validar a conexão com PostgreSQL.
+
+REQUISITOS
+- Python
+- Pandas
+- PostgreSQL
+- Driver PostgreSQL apropriado
+- Variáveis de ambiente para credenciais
+
+NUNCA
+Não coloque senha do PostgreSQL dentro do código.
+Não coloque credenciais dentro do config.json.
+Não faça commit de .env.
+
+CRIAR/VALIDAR
+- .env.example
+- carregamento das variáveis de ambiente
+- módulo de conexão PostgreSQL
+- teste de conexão
+- configuração de CHUNK_SIZE = 1000
+
+VARIÁVEIS ESPERADAS
+POSTGRES_HOST
+POSTGRES_PORT
+POSTGRES_DB
+POSTGRES_USER
+POSTGRES_PASSWORD
+CHUNK_SIZE
+
+CHUNK_SIZE deve ser exatamente 1000 para esta tarefa.
+
+TESTES
+1. Validar se todas as variáveis obrigatórias existem.
+2. Testar conexão.
+3. Executar SELECT 1.
+4. Confirmar versão do PostgreSQL.
+5. Confirmar que o schema esperado existe.
+
+SAÍDA
+Criar:
+- módulo de configuração;
+- módulo de conexão;
+- teste automatizado de conexão/configuração;
+- documentação de execução.
+
+NÃO FAÇA
+Não crie o schema final sem antes consultar o DDL existente.
+Não invente tabelas para fazer o teste passar.

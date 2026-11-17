@@ -1,0 +1,44 @@
+name: milton-pi-api-top  # mantém o volume milton-pi-api-top_postgres_data de antes da pasta backend/pipeline
+
+services:
+  db:
+    image: postgres:15-alpine
+    container_name: milton_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?defina POSTGRES_PASSWORD no .env}
+      POSTGRES_DB: ${POSTGRES_DB:-milton_pi}
+    ports:
+      - "55432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./infra/init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-milton_pi}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  app:
+    image: python:3.14-slim
+    container_name: milton_app
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - ./:/work
+    working_dir: /work
+    environment:
+      POSTGRES_HOST: db
+      POSTGRES_PORT: 5432
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?defina POSTGRES_PASSWORD no .env}
+      POSTGRES_DB: ${POSTGRES_DB:-milton_pi}
+    command: >
+      sh -c "pip install -r requirements.txt --quiet &&
+             python -m src.orchestrator"
+    tty: true
+
+volumes:
+  postgres_data:

@@ -1,0 +1,56 @@
+FASE 08 — TRANSAÇÕES, ERROS E IDEMPOTÊNCIA
+
+OBJETIVO
+Garantir que uma execução parcial não corrompa a base.
+
+TRANSAÇÃO
+Uma competência mensal deve ser carregada em uma transação SQL.
+
+Fluxo:
+BEGIN
+  ingestão
+  transformação
+  carga
+  validações
+COMMIT
+
+Qualquer erro crítico:
+ROLLBACK
+
+REGRAS DE ERRO
+Diferenciar:
+- erro de download;
+- erro de ZIP;
+- erro de encoding;
+- erro de schema;
+- erro de transformação;
+- erro de FK;
+- erro de banco;
+- erro de dados.
+
+Não esconder exceções.
+
+LOG
+Registrar:
+- timestamp;
+- fase;
+- dataset;
+- arquivo;
+- chunk;
+- quantidade;
+- erro;
+- duração.
+
+IDEMPOTÊNCIA
+Executar a mesma competência duas vezes não deve duplicar os dados.
+
+Antes de implementar:
+1. verificar PKs;
+2. verificar UNIQUE;
+3. verificar identificador de competência;
+4. verificar controle de arquivos já ingeridos.
+
+Implementar a estratégia baseada no modelo real.
+
+ROLLBACK
+Simular um erro proposital durante uma carga de teste e comprovar que os registros da transação não permanecem parcialmente carregados.

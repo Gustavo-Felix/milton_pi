@@ -1,0 +1,129 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: >-
+  Milton PI: PostgreSQL no RDS para a pipeline ANS + papel do GitHub Actions que libera
+  o IP do runner no security group só durante a carga. Usa a VPC padrão da conta.
+
+Parameters:
+  DBPassword:
+    Type: String
+    NoEcho: true
+    MinLength: 16
+    MaxLength: 128
+    AllowedPattern: '[A-Za-z0-9]+'
+    ConstraintDescription: 16+ letras e números (sem símbolos, para caber na DATABASE_URL sem codificar).
+  AllowedCidr:
+    Type: String
+    Description: IP de quem roda a cópia inicial (infra/db_setup.sh), ex. 200.100.50.25/32
+    AllowedPattern: '\d{1,3}(\.\d{1,3}){3}/\d{1,2}'
+  DBInstanceClass:
+    Type: String
+    Default: db.t4g.micro
+  GitHubRepo:
+    Type: String
+    Default: rifernun/milton-pi-api
+  CreateGitHubOidcProvider:
+    Type: String
+    Default: 'true'
+    AllowedValues: ['true', 'false']
+    Description: "false se a conta já tem o provedor token.actions.githubusercontent.com (só pode existir um)"
+
+Conditions:
+  CreateOidc: !Equals [!Ref CreateGitHubOidcProvider, 'true']
+
+Resources:
+  DBSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Postgres do Milton PI
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 5432
+          ToPort: 5432
+          CidrIp: !Ref AllowedCidr
+          Description: carga inicial
+
+  Database:
+    Type: AWS::RDS::DBInstance
+    DeletionPolicy: Snapshot
+    UpdateReplacePolicy: Snapshot
+    Metadata:
+      cfn-lint:
+        config:
+          # W3691: '17' sem minor é válido (a AWS escolhe a minor atual); o lint só conhece versões completas.
+          # W1011: senha por parâmetro NoEcho; a rotação do Secrets Manager quebraria a DATABASE_URL fixa.
+          ignore_checks: [W3691, W1011]
+    Properties:
+      DBInstanceIdentifier: milton-pi
+      Engine: postgres
+      EngineVersion: '17'
+      DBInstanceClass: !Ref DBInstanceClass
+      AllocatedStorage: '20'
+      MaxAllocatedStorage: 50
+      StorageType: gp3
+      StorageEncrypted: true
+      DBName: milton_pi
+      MasterUsername: milton
+      MasterUserPassword: !Ref DBPassword
+      PubliclyAccessible: true
+      VPCSecurityGroups: [!GetAtt DBSecurityGroup.GroupId]
+      BackupRetentionPeriod: 7
+      # UTC, depois da carga diária (03:00 UTC, até 5 h): reinício de manutenção não derruba a transação
+      PreferredBackupWindow: '09:00-09:30'
+      PreferredMaintenanceWindow: 'sun:10:00-sun:10:30'
+      DeletionProtection: true
+
+  GitHubOidcProvider:
+    Type: AWS::IAM::OIDCProvider
+    Condition: CreateOidc
+    Properties:
+      Url: https://token.actions.githubusercontent.com
+      ClientIdList: [sts.amazonaws.com]
+
+  CiRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Action: sts:AssumeRoleWithWebIdentity
+            Principal:
+              Federated: !If
+                - CreateOidc
+                - !Ref GitHubOidcProvider
+                - !Sub arn:${AWS::Partition}:iam::${AWS::AccountId}:oidc-provider/token.actions.githubusercontent.com
+            Condition:
+              StringEquals:
+                token.actions.githubusercontent.com:aud: sts.amazonaws.com
+              StringLike:
+                # formato antigo e o imutável (repo:OWNER@ID/REPO@ID), que o GitHub usa em repos novos
+                token.actions.githubusercontent.com:sub:
+                  - !Sub
+                    - repo:${Owner}/${Repo}:*
+                    - Owner: !Select [0, !Split ['/', !Ref GitHubRepo]]
+                      Repo: !Select [1, !Split ['/', !Ref GitHubRepo]]
+                  - !Sub
+                    - repo:${Owner}@*/${Repo}@*:*
+                    - Owner: !Select [0, !Split ['/', !Ref GitHubRepo]]
+                      Repo: !Select [1, !Split ['/', !Ref GitHubRepo]]
+      Policies:
+        - PolicyName: liberar-runner-no-rds
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - ec2:AuthorizeSecurityGroupIngress
+                  - ec2:RevokeSecurityGroupIngress
+                Resource: !Sub arn:${AWS::Partition}:ec2:${AWS::Region}:${AWS::AccountId}:security-group/${DBSecurityGroup.GroupId}
+
+Outputs:
+  DatabaseUrl:
+    Description: DATABASE_URL do .env e do secret do GitHub (troque <senha>)
+    Value: !Sub postgresql://milton:<senha>@${Database.Endpoint.Address}:${Database.Endpoint.Port}/milton_pi
+  SecurityGroupId:
+    Description: variável RDS_SECURITY_GROUP_ID do GitHub
+    Value: !GetAtt DBSecurityGroup.GroupId
+  CiRoleArn:
+    Description: variável AWS_ROLE_ARN do GitHub
+    Value: !GetAtt CiRole.Arn

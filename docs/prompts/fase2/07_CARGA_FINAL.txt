@@ -1,0 +1,53 @@
+FASE 07 — CARGA DEFINITIVA NO POSTGRESQL
+
+OBJETIVO
+Depois que staging e transformações estiverem validados, carregar as tabelas finais.
+
+ORDEM
+Respeitar dependências de FK.
+Dimensões e entidades referenciadas devem ser carregadas antes dos fatos/tabelas dependentes.
+
+TABELAS MENCIONADAS NO MANUAL
+- SERIE_TEMPORAL_ANUAL
+- SERIE_TEMPORAL_MENSAL
+- ESTADO
+- MUNICIPIO
+- OPERADORA
+- PLANO_SAUDE
+- ABRANGENCIA_PLANO
+- PRECO_FAIXA_ETARIA
+- MARKET_SHARE
+- REDE_CREDENCIADA_SINTETICA
+
+NÃO INVENTAR
+A ordem exata deve ser confirmada pelo DDL/FKs do banco.
+
+CARGA
+- usar operações em lote;
+- manter chunks de 1000;
+- usar INSERT/UPSERT adequado ao modelo;
+- respeitar PK/FK;
+- não duplicar competências;
+- preservar histórico.
+
+REDE SINTÉTICA
+Para cada chunk de prestadores:
+1. agregar;
+2. gerar contagens;
+3. fazer upsert;
+4. continuar.
+
+O upsert deve somar/agregar corretamente quando o mesmo grupo aparecer em mais de um chunk, evitando substituir uma contagem parcial pela contagem de apenas um chunk.
+
+VALIDAÇÕES PÓS-CARGA
+Para cada tabela:
+- quantidade inserida;
+- quantidade atualizada;
+- quantidade rejeitada;
+- registros sem FK;
+- duplicidades;
+- NULLs inesperados.
+
+SAÍDA
+Produzir relatório:
+arquivo -> chunks -> registros -> transformados -> inseridos -> atualizados -> erros.

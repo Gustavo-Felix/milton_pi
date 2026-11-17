@@ -1,0 +1,58 @@
+FASE 04 — ZIP + CSV + CHUNKS DE 1000
+
+OBJETIVO
+Implementar a leitura dos arquivos baixados sem carregar datasets inteiros na memória.
+
+REGRA PRINCIPAL
+Todo CSV deve ser lido com Pandas usando chunksize=1000.
+
+EXEMPLO CONCEITUAL
+pd.read_csv(..., chunksize=1000)
+
+ZIP
+Para ZIP:
+1. abrir o ZIP;
+2. localizar os CSVs internos;
+3. abrir o CSV;
+4. iterar em chunks de 1000;
+5. transformar;
+6. enviar para a próxima etapa;
+7. liberar o chunk;
+8. continuar até o fim.
+
+NÃO FAZER
+pd.read_csv() sem chunksize em arquivos grandes.
+Não extrair o ZIP gigante inteiro para memória.
+Não criar uma lista com todos os registros.
+
+ARQUIVO CRÍTICO
+produtos_e_prestadores_hospitalares
+
+O instrucoes.md informa que esse arquivo possui aproximadamente 1,5 GB.
+Ele deve obrigatoriamente ser processado em lotes/streaming.
+
+NORMALIZAÇÃO
+Criar uma função consistente para:
+- normalizar nomes de colunas;
+- tratar NaN;
+- tratar encoding;
+- detectar separador quando necessário;
+- registrar erro de leitura.
+
+VALIDAÇÕES
+Para cada chunk:
+- número de linhas;
+- nomes das colunas;
+- colunas obrigatórias;
+- erros de conversão.
+
+SAÍDA
+Criar:
+- leitor CSV em chunks;
+- leitor ZIP em chunks;
+- testes com CSV pequeno;
+- teste com ZIP de exemplo;
+- logs de quantidade de registros processados.
+
+CRITÉRIO
+Demonstrar que o processo percorre um CSV em vários chunks de 1000 sem criar um DataFrame global.

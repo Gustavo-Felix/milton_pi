@@ -1,0 +1,55 @@
+FASE 10 — DOCUMENTAÇÃO E ENTREGA
+
+OBJETIVO
+Deixar o projeto executável por outra pessoa sem depender da IA que o implementou.
+
+DOCUMENTAR
+1. Pré-requisitos.
+2. Python.
+3. PostgreSQL.
+4. Variáveis .env.
+5. Instalação.
+6. Configuração.
+7. Execução em dry-run.
+8. Execução real.
+9. Estrutura de diretórios.
+10. Como os ZIPs são processados.
+11. Como funciona chunksize=1000.
+12. Como funciona staging.
+13. Como funciona rollback.
+14. Como repetir uma competência.
+15. Como verificar logs.
+16. Como executar testes.
+
+COMANDOS DEVEM SER REAIS
+Não documentar comandos que não existem no projeto.
+
+ARQUIVOS FINAIS
+Manter:
+- README.md
+- config.json
+- instrucoes.md
+- requirements.txt
+- .env.example
+- código da pipeline
+- testes
+- SQL necessário
+- relatório de execução
+
+CHECKLIST FINAL
+[ ] config.json é lido
+[ ] instrucoes.md foi respeitado
+[ ] 12 datasets são reconhecidos
+[ ] downloads funcionam
+[ ] ZIPs funcionam
+[ ] CSVs usam chunks de 1000
+[ ] arquivo gigante não vai inteiro para RAM
+[ ] staging funciona
+[ ] transformações funcionam
+[ ] PostgreSQL recebe os dados
+[ ] transação funciona
+[ ] rollback foi testado
+[ ] idempotência foi testada
+[ ] testes passam
+[ ] execução real foi validada
+[ ] README explica tudo

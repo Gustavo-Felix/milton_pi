@@ -1,0 +1,52 @@
+FASE 01 — ANALISAR O PROJETO ANTES DE CODIFICAR
+
+OBJETIVO
+Antes de escrever código, compreenda o projeto existente e produza um contrato técnico da pipeline.
+
+LEIA OBRIGATORIAMENTE
+1. config.json
+2. instrucoes.md
+3. todos os arquivos existentes do projeto
+4. DDL/schema/diagrama ER do PostgreSQL, caso exista
+
+TAREFAS
+1. Identifique a estrutura atual do projeto.
+2. Identifique como a aplicação atualmente se conecta ao PostgreSQL.
+3. Identifique se já existem funções de download, ETL, logs ou configuração.
+4. Liste todas as tabelas do banco.
+5. Liste as colunas de cada tabela.
+6. Liste PKs, FKs, UNIQUE e índices.
+7. Compare o schema real com os mapeamentos de instrucoes.md.
+8. Identifique campos que precisam de transformação.
+9. Identifique campos que não possuem correspondência clara.
+10. Identifique quais datasets do config.json alimentam quais tabelas.
+
+DATASETS DO config.json
+O arquivo contém 12 datasets:
+- abrangencia_plano
+- rede_credenciada_hospitalar
+- operadora_ativa
+- produto_saude
+- operadora_acreditada
+- valor_comercial_medio_municipio
+- preco_faixa_etaria
+- painel_precificacao
+- beneficiarios_operadora
+- beneficiarios_vinculo_contratacao
+- servicos_opcionais
+- taxa_cobertura
+
+SAÍDA OBRIGATÓRIA
+Crie:
+- ANALISE_PROJETO.md
+- MAPEAMENTO_FONTES.md
+
+MAPEAMENTO_FONTES.md deve conter uma tabela:
+dataset | caminho config | arquivo esperado | tabela destino | transformação | observações
+
+IMPORTANTE
+Não implemente ainda a carga definitiva.
+Esta fase serve para descobrir o contrato real.
+
+CRITÉRIO DE CONCLUSÃO
+A fase só termina quando for possível explicar de onde cada dado vem, para onde vai e quais informações ainda estão faltando.

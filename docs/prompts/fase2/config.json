@@ -1,0 +1,65 @@
+{
+    "projeto_integrador": {
+        "banco_de_dados": "PostgreSQL",
+        "linguagem_pipeline": "Python",
+        "fontes_de_dados": [
+            {
+                "id": "ans_pda",
+                "nome": "Portal de Dados Abertos - ANS",
+                "url_base": "https://dadosabertos.ans.gov.br/FTP/PDA/",
+                "tipo_conexao": "FTP_HTTP",
+                "formato_esperado": "CSV_ZIP",
+                "datasets": [
+                    {
+                        "path": "area_comercializacao_planos_ntrp/",
+                        "dataset": "abrangencia_plano"
+                    },
+                    {
+                        "path": "produtos_e_prestadores_hospitalares/",
+                        "dataset": "rede_credenciada_hospitalar"
+                    },
+                    {
+                        "path": "operadoras_de_plano_de_saude_ativas/",
+                        "dataset": "operadora_ativa"
+                    },
+                    {
+                        "path": "caracteristicas_produtos_saude_suplementar-008/",
+                        "dataset": "produto_saude"
+                    },
+                    {
+                        "path": "operadoras_acreditadas/",
+                        "dataset": "operadora_acreditada"
+                    },
+                    {
+                        "path": "valor_comercial_medio_por_municipio_NTRP-054/",
+                        "dataset": "valor_comercial_medio_municipio"
+                    },
+                    {
+                        "path": "faixa_de_preco/",
+                        "dataset": "preco_faixa_etaria"
+                    },
+                    {
+                        "path": "painel_precificacao-031/",
+                        "dataset": "painel_precificacao"
+                    },
+                    {
+                        "path": "dados_de_beneficiarios_por_operadora/",
+                        "dataset": "beneficiarios_operadora"
+                    },
+                    {
+                        "path": "beneficiarios_vinculos_tipo_contratacao_vda/",
+                        "dataset": "beneficiarios_vinculo_contratacao"
+                    },
+                    {
+                        "path": "servicos_opcionais_planos_saude/",
+                        "dataset": "servicos_opcionais"
+                    },
+                    {
+                        "path": "taxa_de_cobertura_de_planos_de_saude-047/",
+                        "dataset": "taxa_cobertura"
+                    }
+                ]
+            }
+        ]
+    }
+}

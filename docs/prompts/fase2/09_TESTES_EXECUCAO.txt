@@ -1,0 +1,67 @@
+FASE 09 — TESTAR E RODAR A PIPELINE
+
+OBJETIVO
+Executar a pipeline de ponta a ponta e comprovar que ela funciona.
+
+ETAPA 1 — TESTES UNITÁRIOS
+Testar:
+- config;
+- conexão;
+- parser de idade;
+- normalização de colunas;
+- leitura CSV;
+- leitura ZIP;
+- agregação da rede;
+- transformação de market share;
+- regras de mapeamento.
+
+ETAPA 2 — TESTE PEQUENO
+Usar arquivos pequenos ou uma amostra.
+Comprovar:
+- chunks de 1000;
+- transformação;
+- inserção;
+- rollback.
+
+ETAPA 3 — DRY RUN
+Executar sem alterar o banco.
+Mostrar:
+- datasets encontrados;
+- arquivos;
+- tamanho;
+- número estimado de registros, quando disponível.
+
+ETAPA 4 — EXECUÇÃO REAL
+Executar:
+download -> ZIP -> chunks -> staging -> transformação -> carga final.
+
+ETAPA 5 — ARQUIVO GIGANTE
+Executar o processamento de produtos_e_prestadores_hospitalares.
+Monitorar:
+- memória;
+- tempo;
+- chunks;
+- registros processados;
+- agregações;
+- erros.
+
+ETAPA 6 — VALIDAÇÃO
+Consultar o PostgreSQL e comparar:
+- registros recebidos;
+- registros processados;
+- registros carregados.
+
+CRITÉRIO DE SUCESSO
+Não basta o programa terminar com exit code 0.
+É necessário comprovar que os dados chegaram nas tabelas esperadas.
+
+ENTREGA
+Gerar um RELATORIO_EXECUCAO.md com:
+- data;
+- duração;
+- datasets;
+- arquivos;
+- chunks;
+- registros;
+- erros;
+- status final.

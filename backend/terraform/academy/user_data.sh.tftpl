@@ -1,0 +1,79 @@
+#!/bin/bash
+# Roda uma vez, no primeiro boot (cloud-init). Prepara o Docker, o swap e o script da pipeline.
+# ATENÇÃO: este arquivo é um template do Terraform; não use sintaxe de chaves com cifrão nem de porcentagem+chave no shell.
+set -uo pipefail
+exec > >(tee /var/log/milton-bootstrap.log) 2>&1
+
+dnf install -y docker unzip
+systemctl enable --now docker
+
+# 2 GB de swap: o t3.small tem só 2 GB de RAM
+if ! swapon --show | grep -q swapfile; then
+  fallocate -l 2G /swapfile
+  chmod 600 /swapfile
+  mkswap /swapfile
+  swapon /swapfile
+fi
+
+mkdir -p /opt/milton /opt/milton/pip-cache
+
+cat > /opt/milton/etl.env <<ENVEOF
+DATABASE_URL=${database_url}
+PIPELINE_CHUNK_SIZE=${chunk_size}
+PIPELINE_BATCH_SIZE=${batch_size}
+ENVEOF
+chmod 600 /opt/milton/etl.env
+
+cat > /opt/milton/run_etl.sh <<'RUNEOF'
+#!/bin/bash
+# Uso: sudo /opt/milton/run_etl.sh [ano mes [datasets...]]
+set -uo pipefail
+exec > >(tee -a /var/log/milton-etl.log) 2>&1
+echo "=== ETL iniciado em $(date -u) ==="
+
+# swapon não persiste após reboot; reative a swap criada no primeiro boot.
+if [ ! -f /swapfile ]; then
+  fallocate -l 2G /swapfile
+  chmod 600 /swapfile
+  mkswap /swapfile
+fi
+if ! swapon --show=NAME --noheadings | grep -Fqx /swapfile; then
+  swapon /swapfile || { echo "=== FALHA ao ativar swap ==="; exit 1; }
+fi
+echo "Swap ativa: $(swapon --show=SIZE --noheadings /swapfile | xargs)"
+
+ARGS="$*"
+if [ -z "$ARGS" ]; then ARGS="${etl_args}"; fi
+
+# código sempre atualizado a partir do S3
+rm -rf /opt/milton/app
+mkdir -p /opt/milton/app
+aws s3 cp s3://${bucket}/${key} /tmp/pipeline.zip --region ${region}
+unzip -q /tmp/pipeline.zip -d /opt/milton/app
+
+# 1) schema (init.sql é idempotente; equivale ao infra/db_setup.sh)
+docker run --rm -i --env-file /opt/milton/etl.env postgres:17-alpine \
+  sh -c 'psql "$DATABASE_URL?sslmode=require" -v ON_ERROR_STOP=1 -q' < /opt/milton/app/infra/init.sql
+if [ $? -ne 0 ]; then echo "=== FALHA ao aplicar o schema ==="; exit 1; fi
+
+# 2) pipeline
+docker run --rm --env-file /opt/milton/etl.env \
+  -v /opt/milton/app:/work -v /opt/milton/pip-cache:/root/.cache/pip -w /work \
+  python:3.14-slim sh -c "pip install -r requirements.txt -q && python -m src.orchestrator $ARGS"
+STATUS=$?
+echo "=== ETL terminou com codigo $STATUS em $(date -u) ==="
+
+if [ $STATUS -eq 0 ] && [ "${stop_after_etl}" = "true" ]; then
+  echo "Desligando a instancia (stop_after_etl)."
+  shutdown -h now
+fi
+exit $STATUS
+RUNEOF
+chmod 755 /opt/milton/run_etl.sh
+
+# Em todo boot seguinte (start-instances) a pipeline roda de novo.
+ln -sf /opt/milton/run_etl.sh /var/lib/cloud/scripts/per-boot/10-milton-etl.sh
+
+if [ "${run_etl_on_boot}" = "true" ]; then
+  /opt/milton/run_etl.sh
+fi

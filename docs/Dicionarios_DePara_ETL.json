@@ -1,0 +1,86 @@
+{
+    "ANS": {
+        "operadora": {
+            "Registro_ANS": "id",
+            "CNPJ": "cnpj",
+            "Razao_Social": "razao_social",
+            "Nome_Fantasia": "nome_fantasia",
+            "Modalidade": "modalidade",
+            "Logradouro": "endereco_logradouro",
+            "Numero": "endereco_numero",
+            "Complemento": "endereco_complemento",
+            "Bairro": "endereco_bairro",
+            "Cidade": "endereco_cidade",
+            "UF": "endereco_uf",
+            "CEP": "endereco_cep",
+            "DDD": "telefone_ddd",
+            "Telefone": "telefone_numero",
+            "Endereco_eletronico": "email",
+            "Representante": "representante_legal",
+            "Cargo_Representante": "representante_cargo",
+            "Data_Registro_ANS": "data_registro",
+            "Situacao_Operadora": "status_operadora"
+        },
+        "produto_saude": {
+            "ID_PLANO": "id",
+            "CD_PLANO": "codigo_plano",
+            "NM_PLANO": "nome_plano",
+            "CD_OPERADORA": "id_operadora",
+            "SG_SEGMENTACAO": "segmentacao_assistencial",
+            "DS_TIPO_CONTRATACAO": "tipo_contratacao",
+            "DS_SITUACAO": "status_plano",
+            "DT_REGISTRO": "data_registro",
+            "VL_FRANQUIA": "franquia_valor",
+            "IN_COPARTICIPACAO": "coparticipacao_indicador"
+        },
+        "abrangencia_plano": {
+            "ID_ABRANGENCIA": "id",
+            "CD_PLANO": "id_produto_saude",
+            "CD_MUNICIPIO_IBGE": "id_municipio",
+            "DS_TIPO_ABRANGENCIA": "tipo_abrangencia"
+        },
+        "preco_faixa_etaria": {
+            "ID_PRECO": "id",
+            "CD_PLANO": "id_produto_saude",
+            "CD_FAIXA_ETARIA": "faixa_etaria_codigo",
+            "VL_PRECO": "valor",
+            "DT_VIGENCIA": "data_vigencia"
+        },
+        "market_share": {
+            "ID_MARKET_SHARE": "id",
+            "CD_OPERADORA": "id_operadora",
+            "QT_BENEFICIARIOS": "quantidade_beneficiarios",
+            "DT_COMPETENCIA": "mes_ano_referencia",
+            "PC_MARKET_SHARE": "percentual_market_share"
+        }
+    },
+    "MS": {
+        "municipio": {
+            "co_municipio_ibge": "id",
+            "no_municipio": "nome",
+            "co_sigla_estado": "id_estado",
+            "qt_populacao_estimada": "populacao",
+            "nu_densidade_demografica": "densidade_demografica"
+        },
+        "estado": {
+            "co_sigla_estado": "id",
+            "no_estado": "nome",
+            "co_regiao": "regiao"
+        },
+        "perfil_saude_publica": {
+            "id_estabelecimento": "id",
+            "co_municipio_ibge": "id_municipio",
+            "no_fantasia": "nome_estabelecimento",
+            "ds_tipo_estabelecimento": "tipo_estabelecimento",
+            "st_atende_sus": "atende_sus_indicador",
+            "qt_leitos_sus": "quantidade_leitos_sus"
+        },
+        "serie_temporal_mensal": {
+            "id_registro": "id",
+            "co_municipio_ibge": "id_municipio",
+            "dt_competencia": "mes_ano_referencia",
+            "qt_atendimentos": "quantidade_atendimentos",
+            "vl_gasto_sus": "valor_gasto"
+        }
+    }
+}

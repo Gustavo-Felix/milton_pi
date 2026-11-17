@@ -1,0 +1,48 @@
+FASE 05 — STAGING NO POSTGRESQL
+
+OBJETIVO
+Criar uma camada intermediária para receber os dados brutos antes das transformações definitivas.
+
+MOTIVO
+O staging permite rastrear os dados recebidos e evita perder informações enquanto os mapeamentos finais são executados.
+
+ESTRUTURA
+Usar a estrutura existente do projeto se já houver staging.
+Caso não exista, propor uma tabela staging adequada e apresentar a proposta antes de criar.
+
+A pipeline deve registrar pelo menos:
+- dataset;
+- arquivo;
+- competência, quando identificável;
+- dados brutos;
+- timestamp de ingestão.
+
+CHUNKS
+Cada INSERT deve trabalhar com no máximo 1000 registros por lote.
+
+PERFORMANCE
+Usar uma estratégia adequada para inserção em lote no PostgreSQL.
+Não executar INSERT individual para cada linha.
+
+VALIDAÇÃO
+Após inserir cada arquivo:
+- contar registros processados;
+- contar registros inseridos;
+- registrar divergências;
+- registrar tempo;
+- registrar erro.
+
+IDEMPOTÊNCIA
+Definir como evitar duplicação quando a mesma competência/arquivo for executada novamente.
+Usar checksum, nome + competência, chave natural ou mecanismo já existente no projeto.
+Não inventar uma chave sem verificar o modelo.
+
+TRANSAÇÃO
+A competência deve estar protegida por transação.
+Erro crítico -> ROLLBACK.
+
+SAÍDA
+- staging implementado;
+- testes;
+- logs;
+- mecanismo de controle de ingestão.

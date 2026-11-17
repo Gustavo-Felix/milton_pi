@@ -1,0 +1,8 @@
+# Copie para terraform.tfvars e preencha
+my_ip_cidr  = "200.100.50.25/32"
+alert_email = "voce@exemplo.com"
+
+# aws_region          = "us-east-1"
+# task_architecture   = "X86_64"
+# schedule_expression = "cron(0 3 * * ? *)"   # diário (RNF03)
+# schedule_enabled    = true

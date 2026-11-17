@@ -1,0 +1,54 @@
+FASE 03 — DOWNLOAD DOS DADOS DA ANS
+
+OBJETIVO
+Implementar o download dos arquivos definidos no config.json.
+
+FONTE
+Usar exclusivamente a URL configurada em config.json.
+A URL base atualmente configurada é o Portal de Dados Abertos da ANS.
+
+REGRAS
+1. Ler os datasets dinamicamente do config.json.
+2. Não escrever os caminhos dos 12 datasets manualmente no código.
+3. Acessar o diretório configurado.
+4. Descobrir arquivos CSV/ZIP disponíveis.
+5. Baixar os arquivos.
+6. Salvar os arquivos localmente de forma organizada.
+7. Não baixar novamente um arquivo que já esteja validado localmente, se a estratégia de idempotência do projeto permitir.
+8. Usar timeout.
+9. Tratar HTTP errors.
+10. Registrar logs.
+
+ESTRUTURA SUGERIDA
+data/
+  abrangencia_plano/
+  rede_credenciada_hospitalar/
+  operadora_ativa/
+  ...
+
+CADA DOWNLOAD DEVE REGISTRAR
+- dataset
+- URL
+- nome do arquivo
+- tamanho
+- data/hora
+- status
+- erro, se houver
+
+VALIDAÇÕES
+Depois do download:
+- verificar arquivo existente;
+- verificar tamanho > 0;
+- verificar extensão;
+- para ZIP, validar integridade com ZipFile.testzip() ou equivalente.
+
+SAÍDA
+Criar módulo de downloader e testes.
+
+CRITÉRIO DE CONCLUSÃO
+Executar um dry-run que mostre todos os datasets encontrados sem necessariamente baixar tudo.
+Depois executar o download real de um dataset pequeno para validar o fluxo.
+
+NÃO FAÇA
+Não assumir que todos os arquivos têm um único nome fixo.
+Não mascarar erro de download.

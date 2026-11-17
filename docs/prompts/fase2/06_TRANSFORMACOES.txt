@@ -1,0 +1,95 @@
+FASE 06 — TRANSFORMAÇÕES SEGUNDO instrucoes.md
+
+OBJETIVO
+Implementar somente as transformações documentadas.
+
+1. SERIE_TEMPORAL
+Criar/controlar séries temporais de acordo com a regra do instrucoes.md.
+A ingestão de novo arquivo/competência deve permitir tracking histórico.
+
+2. ESTADO / MUNICIPIO
+Usar os arquivos auxiliares indicados no manual:
+- pda-054-geografia.csv
+- pda-008-tabela_auxiliar_de_detalhamento_de_municipios.csv
+
+Não inventar códigos de município.
+
+3. OPERADORA
+Fonte:
+Relatorio_cadop.csv
+
+Mapeamento:
+id_operadora <- REGISTRO_OPERADORA
+razao_social <- RAZAO_SOCIAL
+cnpj <- CNPJ
+modalidade <- MODALIDADE
+
+4. PLANO_SAUDE
+Fontes:
+pda-008-caracteristicas_produtos_saude_suplementar.csv
+Painel de Precificação
+
+Mapeamento:
+id_plano <- ID_PLANO
+id_operadora <- REGISTRO_OPERADORA
+nome_comercial <- NM_PLANO
+tipo_contratacao <- CONTRATACAO
+abrangencia_geografica <- ABRANGENCIA_COBERTURA
+
+nota_sinistralidade_media é derivada conforme a regra do manual, cruzando PCT_DESP_ASS.
+Não inventar fórmula diferente.
+
+5. ABRANGENCIA_PLANO
+Fonte:
+pda_area_comer_plano_ntrp.csv
+
+id_plano <- ID_PLANO
+id_municipio <- CD_MUNICIPIO
+tipo_abrangencia <- Comercialização Ativa
+
+6. PRECO_FAIXA_ETARIA
+Fontes:
+rel_faixa_de_preco.csv
+arquivos valor_comercial_medio_por_municipio_NTRP-054/
+
+Fazer split de FAIXA_ETARIA.
+Exemplo:
+00 a 18 anos -> 0 / 18
+
+valor <- VCM ou VALOR_FINAL_FAIXA.
+
+7. MARKET_SHARE
+Fontes:
+pda-047-taxa_cobertura.csv
+dados_de_beneficiarios_por_operadora/
+
+qtd_beneficiarios <- BENEF_TOTAL ou contagem definida no manual.
+percentual_penetracao <- TX_COBERT_TOTAL.
+
+Fazer join com MUNICIPIO.
+Se município não existir, seguir a regra do manual para criação pelo código IBGE.
+
+8. REDE_CREDENCIADA_SINTETICA
+Fonte:
+produtos_e_prestadores_hospitalares.zip
+
+Para cada chunk:
+agrupar por ID_PLANO, CD_MUNICIPIO, ID_SERIE_MENSAL.
+
+Contar:
+- HOSPITAL
+- PRONTO ATENDIMENTO
+- LABORATORIO
+- CONSULTORIO
+
+IMPORTANTE
+Não salvar centenas de milhares de prestadores individualmente se o modelo final pede a agregação sintética.
+
+TESTES
+Cada transformação deve possuir teste unitário com dados pequenos e conhecidos.
+
+SAÍDA
+- transformadores;
+- testes;
+- documentação de cada regra;
+- relatório de registros antes/depois.

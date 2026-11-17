@@ -1,0 +1,4 @@
+my_ip_cidr = "200.100.50.25/32"
+
+# Teste rápido (minutos em vez de ~2 h):
+# etl_args = "2026 11 geografia operadora_ativa"

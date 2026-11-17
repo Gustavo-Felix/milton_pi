@@ -1,0 +1,76 @@
+FASES DA PIPELINE ANS — ORQUESTRADOR PRINCIPAL
+
+OBJETIVO
+Você é a IA responsável por implementar uma pipeline de Engenharia de Dados em Python para consumir os arquivos disponibilizados pelo Portal de Dados Abertos da ANS e carregar os dados no PostgreSQL.
+
+ARQUIVOS DE REFERÊNCIA OBRIGATÓRIOS
+- config.json: contém a configuração das fontes, URL da ANS e os datasets.
+- instrucoes.md: contém o mapeamento de origem/destino e as regras de transformação.
+- O projeto existente: deve ser analisado antes de qualquer alteração.
+
+REGRA FUNDAMENTAL
+Não invente tabelas, colunas, chaves, tipos ou regras que não estejam no projeto, no config.json, no instrucoes.md ou no esquema/DDL real do PostgreSQL.
+
+Se alguma informação necessária não existir nesses arquivos, pare naquela parte e informe exatamente o que está faltando.
+
+ORDEM OBRIGATÓRIA
+Execute as fases nesta ordem:
+
+FASE 01 — Análise do projeto e contrato de dados
+FASE 02 — Configuração e conexão PostgreSQL
+FASE 03 — Download dos arquivos ANS
+FASE 04 — Extração dos ZIPs e leitura em chunks
+FASE 05 — Staging dos dados
+FASE 06 — Transformações e mapeamentos
+FASE 07 — Carga definitiva no PostgreSQL
+FASE 08 — Transação, idempotência e tratamento de erros
+FASE 09 — Testes e execução real
+FASE 10 — Documentação e entrega
+
+REGRA DE CHUNKS
+Todos os CSVs devem ser processados em chunks de exatamente 1000 registros.
+Não carregue arquivos gigantes inteiros em memória.
+O arquivo de produtos e prestadores hospitalares é especialmente crítico e deve ser processado por streaming/chunks.
+
+REGRA DE ZIP
+Os arquivos ZIP devem ser baixados e descompactados/processados pela pipeline.
+Não assumir que o conteúdo do ZIP cabe em memória.
+Quando possível, leia o CSV diretamente do ZIP em chunks.
+
+REGRA TRANSACIONAL
+Uma competência mensal deve ser tratada dentro de uma transação.
+Se ocorrer erro durante a carga da competência, executar ROLLBACK.
+Não deixar a base em estado parcialmente carregado.
+
+REGRA DE EXECUÇÃO
+Depois de cada fase:
+1. implemente;
+2. execute os testes possíveis;
+3. mostre os arquivos alterados;
+4. mostre o resultado dos testes;
+5. só avance quando a fase estiver validada.
+
+ENTREGA FINAL
+A pipeline deve:
+- ler config.json;
+- acessar as fontes ANS;
+- baixar CSVs/ZIPs;
+- processar ZIPs;
+- usar Pandas;
+- usar chunks de 1000;
+- transformar os dados conforme instrucoes.md;
+- carregar PostgreSQL;
+- usar transações;
+- tratar erros;
+- permitir execução repetível;
+- possuir testes;
+- possuir documentação;
+- Apague o que for necessário.
+
+NÃO FAÇA
+- Não substitua Pandas por outro framework sem necessidade.
+- Não substitua PostgreSQL por outro banco.
+- Não altere o modelo de negócio definido no instrucoes.md.
+- Não carregue o arquivo gigante inteiro em RAM.
+- Não crie dados fictícios para completar campos.
+- Não considere a pipeline concluída apenas porque o download funcionou.

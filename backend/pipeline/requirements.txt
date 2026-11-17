@@ -1,0 +1,10 @@
+# Versões fixas: os ids das tabelas fato vêm do hash do pandas (transforms.stable_id).
+requests==2.34.2
+pandas==3.0.6
+numpy==2.5.3
+SQLAlchemy==2.0.54
+psycopg2-binary==2.9.13
+urllib3==2.8.0
+inflate64==1.0.4
+zipfile64==0.1.0
+pytest==9.1.1

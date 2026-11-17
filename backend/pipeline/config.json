@@ -1,0 +1,101 @@
+{
+    "projeto_integrador": {
+        "fontes_de_dados": [
+            {
+                "id": "ans_pda",
+                "nome": "Portal de Dados Abertos - ANS",
+                "url_base": "https://dadosabertos.ans.gov.br/FTP/PDA/",
+                "_comentario": "arquivo = regex do nome do arquivo no diretório; selecao = primeiro | todos | competencia (YYYYMM.zip mais recente <= competência)",
+                "datasets": [
+                    {
+                        "path": "valor_comercial_medio_por_municipio_NTRP-054/",
+                        "dataset": "geografia",
+                        "arquivo": "^pda-054-geografia\\.csv$"
+                    },
+                    {
+                        "path": "operadoras_de_plano_de_saude_canceladas/",
+                        "dataset": "operadora_cancelada",
+                        "arquivo": "^Relatorio_cadop_canceladas\\.csv$",
+                        "situacao": "CANCELADA"
+                    },
+                    {
+                        "path": "operadoras_de_plano_de_saude_ativas/",
+                        "dataset": "operadora_ativa",
+                        "arquivo": "^Relatorio_cadop\\.csv$"
+                    },
+                    {
+                        "path": "caracteristicas_produtos_saude_suplementar-008/",
+                        "dataset": "produto_saude",
+                        "arquivo": "^pda-008-caracteristicas_produtos_saude_suplementar\\.csv$"
+                    },
+                    {
+                        "path": "area_comercializacao_planos_ntrp/",
+                        "dataset": "abrangencia_plano",
+                        "arquivo": "^pda_area_comer_plano_ntrp\\.csv$"
+                    },
+                    {
+                        "path": "valor_comercial_medio_por_municipio_NTRP-054/",
+                        "dataset": "valor_comercial_medio_municipio",
+                        "arquivo": "^\\d{6}\\.zip$",
+                        "selecao": "competencia"
+                    },
+                    {
+                        "path": "produtos_e_prestadores_hospitalares/",
+                        "dataset": "rede_credenciada_hospitalar",
+                        "arquivo": "^produtos_e_prestadores_hospitalares\\.zip$"
+                    },
+                    {
+                        "path": "dados_de_beneficiarios_por_operadora/",
+                        "dataset": "beneficiarios_operadora",
+                        "arquivo": "^sib_ativo_[A-Z]{2}\\.zip$",
+                        "selecao": "todos"
+                    },
+                    {
+                        "path": "taxa_de_cobertura_de_planos_de_saude-047/",
+                        "dataset": "taxa_cobertura",
+                        "arquivo": "^pda-047-taxa_cobertura\\.csv$",
+                        "url_populacao_ibge": "https://servicodados.ibge.gov.br/api/v3/agregados/6579/periodos/{ano}/variaveis/9324?localidades=N6[all]"
+                    },
+                    {
+                        "path": "operadoras_acreditadas/",
+                        "dataset": "operadora_acreditada",
+                        "motivo": "sem tabela de destino no DER"
+                    },
+                    {
+                        "path": "faixa_de_preco/",
+                        "dataset": "preco_faixa_etaria",
+                        "motivo": "rel_faixa_de_preco.csv não tem ID_PLANO; o preço vem do VCM (valor_comercial_medio_municipio)"
+                    },
+                    {
+                        "path": "painel_precificacao-031/",
+                        "dataset": "painel_precificacao",
+                        "arquivo": "^pda-031-painel_precificacao\\.zip$"
+                    },
+                    {
+                        "path": "beneficiarios_vinculos_tipo_contratacao_vda/",
+                        "dataset": "beneficiarios_vinculo_contratacao",
+                        "motivo": "sem tabela de destino no DER"
+                    },
+                    {
+                        "path": "servicos_opcionais_planos_saude/",
+                        "dataset": "servicos_opcionais",
+                        "motivo": "sem tabela de destino no DER"
+                    }
+                ]
+            },
+            {
+                "id": "ibge",
+                "nome": "IBGE - API de Localidades",
+                "datasets": [
+                    {
+                        "dataset": "ibge_localidades",
+                        "url_estados": "https://servicodados.ibge.gov.br/api/v1/localidades/estados",
+                        "url_municipios": "https://servicodados.ibge.gov.br/api/v1/localidades/municipios",
+                        "url_populacao_periodos": "https://servicodados.ibge.gov.br/api/v3/agregados/6579/periodos",
+                        "url_populacao": "https://servicodados.ibge.gov.br/api/v3/agregados/6579/periodos/{periodos}/variaveis/9324?localidades=N6[all]"
+                    }
+                ]
+            }
+        ]
+    }
+}
